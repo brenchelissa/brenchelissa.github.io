@@ -8,10 +8,24 @@ $(document).ready(function () {
     slides.eq(slideIndex).addClass("active");
   }
 
-  setInterval(showSlides, 4000); // every 4 seconds
+  setInterval(showSlides, 4000); // 4 seconds per slide
 
-  $("#playMusic").click(function () {
-    $("#bg-music")[0].play();
-    $(this).text("Playing 🎶").addClass("btn-success").removeClass("btn-primary").prop("disabled", true);
-  });
+  const music = $("#bg-music")[0];
+
+  // Try to autoplay music
+  const playPromise = music.play();
+
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        $("#playMusic").hide(); // Autoplay successful, hide button
+      })
+      .catch(() => {
+        // Autoplay was blocked — show fallback button
+        $("#playMusic").show().click(function () {
+          music.play();
+          $(this).text("Playing 🎶").addClass("btn-success").prop("disabled", true);
+        });
+      });
+  }
 });
